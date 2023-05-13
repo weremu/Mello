@@ -1,0 +1,50 @@
+local oldh
+    oldh =
+        hookmetamethod(
+        game,
+        "__index",
+        function(Self, Index)
+            if Self:IsA("Mouse") and Index == "Hit" and c7 then
+                local target
+                local raycastlimit = 9e9
+                for _, V in pairs(workspace.Characters:GetChildren()) do
+                    if
+                        V.Name ~= game.Players.LocalPlayer.Name and V:FindFirstChild("Head") and
+                            V:FindFirstChild("HumanoidRootPart") and
+                            V:FindFirstChild("I_LOADED_I") and
+                            V.I_LOADED_I:FindFirstChild("K.O") and
+                            not V.I_LOADED_I:FindFirstChild("K.O").Value
+                     then
+                        local pos, vis = workspace.CurrentCamera:WorldToViewportPoint(V.HumanoidRootPart.Position)
+                        if vis then
+                            local m =
+                                (Vector2.new(
+                                game.Players.LocalPlayer:GetMouse().X,
+                                game.Players.LocalPlayer:GetMouse().Y
+                            ) - Vector2.new(pos.X, pos.Y)).Magnitude
+                            if m < raycastlimit and m < circfov then
+                                local humanoid = V.Humanoid
+                                humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.Subject
+                                humanoid.HealthDisplayDistance = 5000
+                                humanoid.NameDisplayDistance = 5000
+                                target = V
+                                raycastlimit = m
+                            else
+                                local humanoid = V.Humanoid
+                                humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.Viewer
+                                humanoid.HealthDisplayDistance = 100
+                                humanoid.NameDisplayDistance = 100
+                            end
+                        end
+                    end
+                end
+
+                if target then
+                    local head = target.Head
+                    returningvalue = head.CFrame + (head.Velocity * .20)
+                    return Index == "Hit" and returningvalue
+                end
+            end
+            return oldh(Self, Index)
+        end
+    )

@@ -1,0 +1,39 @@
+--// buy armor
+local runService = game:GetService("RunService")
+local client = game:GetService("Players").LocalPlayer
+local connections = {}
+
+local function getRootPart()
+   local character = client.Character or client.CharacterAdded:Wait()
+   
+   return character:WaitForChild("HumanoidRootPart")
+end
+
+local function teleport(cframe)
+   local rootPart = getRootPart()
+   
+   connections["Heartbeat"] = runService.Heartbeat:Connect(function()
+       local oldVelocity = rootPart.Velocity
+       
+       rootPart.Velocity = Vector3.new(9e9, 9e9, 9e9)
+       runService.RenderStepped:Wait()
+       rootPart.Velocity = oldVelocity
+
+       task.wait(.4)
+       connections["Heartbeat"]:Disconnect()
+   end)
+   
+   task.wait(.2)
+   rootPart.CFrame = cframe
+end
+
+local char = game.Players.LocalPlayer.Character
+local oldcf = char.HumanoidRootPart.CFrame
+local con
+con = char.HumanoidRootPart:GetPropertyChangedSignal("CFrame"):connect(function()
+    fireclickdetector(workspace.Ignored.Shop.Armor["[High Armor] - $550"].ClickDetector)
+end)
+teleport(CFrame.new(-1229, 337, -514))
+task.wait(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue()/100)
+teleport(oldcf)
+con:Disconnect()

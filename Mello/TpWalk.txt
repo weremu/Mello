@@ -1,0 +1,48 @@
+local Players = game:service('Players')
+local Player = Players.LocalPlayer
+
+local userInput = game:service('UserInputService')
+local runService = game:service('RunService')
+
+repeat wait() until Player.Character
+
+local Character = Player.Character
+local pHum = Character:WaitForChild('Humanoid')
+local humRoot = Character:WaitForChild('HumanoidRootPart')
+
+local Multiplier = 2.0
+
+userInput.InputBegan:connect(function(Key)
+    if Key.KeyCode == Enum.KeyCode.LeftBracket then
+        Multiplier = Multiplier + 0.1
+        print(Multiplier)
+        wait(0.2)
+        while userInput:IsKeyDown(Enum.KeyCode.LeftBracket) do
+            wait()
+            Multiplier = Multiplier + 0.1
+            print(Multiplier)
+        end
+    end
+    
+    if Key.KeyCode == Enum.KeyCode.RightBracket then
+        Multiplier = Multiplier - 0.1
+        print(Multiplier)
+        wait(0.2)
+        while userInput:IsKeyDown(Enum.KeyCode.RightBracket) do
+            wait()
+            Multiplier = Multiplier - 0.1
+            print(Multiplier)
+        end
+    end
+end)
+
+if _G.tpw then _G.tpw:Disconnect() end
+
+_G.tpw = runService.Stepped:connect(function()
+    if userInput:IsKeyDown(Enum.KeyCode.LeftShift) then
+        humRoot.CFrame = humRoot.CFrame + pHum.MoveDirection * Multiplier
+    else
+        humRoot.CFrame = humRoot.CFrame
+        wait()
+    end
+end)

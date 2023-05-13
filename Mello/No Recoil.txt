@@ -1,0 +1,1 @@
+getconnections(game.Players.LocalPlayer.Character.I_LOADED_I.Shots.Changed)[1]:Disable()
